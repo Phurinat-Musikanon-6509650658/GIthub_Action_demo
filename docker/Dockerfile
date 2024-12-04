@@ -16,8 +16,3 @@ EXPOSE 3000
 
 # Run the application
 CMD ["npm", "start"]
-
-# Metadata
-LABEL maintainer="YourName <your.email@example.com>"
-LABEL description="Node.js application"
-LABEL version="1.0.0"
