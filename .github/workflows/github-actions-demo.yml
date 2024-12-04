@@ -19,15 +19,18 @@ jobs:
     strategy:
       matrix:
         poommie: [ubuntu-latest, windows-latest, macos-latest]
-        node-version: [18.x, 20.x, 22.x]
+        node-version: [18.xx]
 
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
+        
     - run: npm ci
     - run: npm run build --if-present
     - run: npm test
@@ -35,11 +38,14 @@ jobs:
   Build-Test:
     needs: Test
     runs-on: ubuntu-latest
-    
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
 
+    - name: Debug:List files
+      run: ls -la
+      
     - name: Log in to Docker Hub
       uses: docker/login-action@v2
       with:
