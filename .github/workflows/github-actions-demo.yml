@@ -5,15 +5,19 @@ name: Node.js CI
 
 on:
   push:
-    branches: [ main ]
+    branches: 
+      - main
+    paths-ignore:
+      - 'README.md'
+    
   pull_request:
-    branches: [ main ]
-
+    branches:
+      - main
+    paths-ignore:
+      - 'README.md'
 jobs:
-  build:
-
-    runs-on: ${{ matrix.poommie }}
-
+  Test:
+    runs-on: ${{ matrix.poo5mmie }}
     strategy:
       matrix:
         poommie: [ubuntu-latest, windows-latest, macos-latest]
@@ -31,25 +35,46 @@ jobs:
     - run: npm run build --if-present
     - run: npm test
 
-  docker:
-      needs: build
+  Build-Test:
+      needs: Test
       runs-on: ubuntu-latest # Docker is typically installed by default on Ubuntu runners.
+      
       steps:
-        - uses: actions/checkout@v4
-        - name: Set up Docker
+        - name: Checkout code
+        - uses: actions/checkout@v3
+
+        - name: Log in the Docker hub
+        - uses: docker/login-action@v2
+          with:
+            username: ${{ secrets.DOCKERHUB_USERNAME }}
+            password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+        - name: Build Docker Image
           run: |
-            sudo apt-get update
-            sudo apt-get install -y docker.io
-              if: runner.os == 'Linux'
+            docker build -t ${{ secrets.DOCKER_USERNAME }}/Github_Action_demo:latest . 
+            
+        - name: Push Docker Image to DockerHub
+          run: |
+            docker build -t ${{ secrets.DOCKER_USERNAME }}/Github_Action_demo:latest .
 
-              - name: Login to DockerHub
-            uses: docker/login-action@v1
-            with:
-              username: ${{ secrets.DOCKERHUB_USERNAME }}
-              password: ${{ secrets.DOCKERHUB_TOKEN }}
+            
 
-              - name: Build and push Docker image
-                uses: docker/build-push-action@v2
-                with:
-                  push: true
-                  tags: ${{ secrets.DOCKERHUB_USERNAME }}/<image_name>:latest
+
+
+        # - name: test
+        #   run: |
+        #     sudo apt-get update
+        #     sudo apt-get install -y docker.io
+        #       if: runner.os == 'Linux'
+
+        #       - name: Login to DockerHub
+        #     uses: docker/login-action@v1
+        #     with:
+        #       username: ${{ secrets.DOCKERHUB_USERNAME }}
+        #       password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+        #       - name: Build and push Docker image
+        #         uses: docker/build-push-action@v2
+        #         with:
+        #           push: true
+        #           tags: ${{ secrets.DOCKERHUB_USERNAME }}/<image_name>:latest
