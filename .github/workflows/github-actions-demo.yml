@@ -19,7 +19,7 @@ jobs:
     strategy:
       matrix:
         poommie: [ubuntu-latest, windows-latest, macos-latest]
-        node-version: [18.xx]
+        node-version: [14 , 16 , 18]
 
     steps:
     - name: Checkout code
