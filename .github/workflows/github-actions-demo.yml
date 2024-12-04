@@ -55,7 +55,7 @@ jobs:
             
         - name: Push Docker Image to DockerHub
           run: |
-            docker build -t ${{ secrets.DOCKER_USERNAME }}/Github_Action_demo:latest .
+            docker push -t ${{ secrets.DOCKER_USERNAME }}/Github_Action_demo:latest
 
             
 
